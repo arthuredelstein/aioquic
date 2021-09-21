@@ -82,6 +82,13 @@ async def padding(request):
     return PlainTextResponse("Z" * size)
 
 
+async def connection_id(request):
+    """
+    Return tracking data.
+    """
+    connection_id0 = request.scope["connection_ids"][0].cid.hex()
+    return PlainTextResponse(connection_id0)
+
 async def ws(websocket):
     """
     WebSocket echo endpoint.
@@ -133,6 +140,7 @@ starlette = Starlette(
     routes=[
         Route("/", homepage),
         Route("/{size:int}", padding),
+        Route("/connection_id", connection_id),
         Route("/echo", echo, methods=["POST"]),
         Mount("/httpbin", WsgiToAsgi(httpbin.app)),
         Route("/logs", logs),

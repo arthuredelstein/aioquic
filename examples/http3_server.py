@@ -408,6 +408,7 @@ class HttpServerProtocol(QuicConnectionProtocol):
                 if isinstance(self._http, H3Connection):
                     extensions["http.response.push"] = {}
                 scope = {
+                    "connection_ids": self._http._quic._host_cids,
                     "client": client,
                     "extensions": extensions,
                     "headers": headers,
@@ -559,6 +560,7 @@ if __name__ == "__main__":
         max_datagram_frame_size=65536,
         quic_logger=quic_logger,
         secrets_log_file=secrets_log_file,
+        connection_id_length=16
     )
 
     # load SSL certificate and key
