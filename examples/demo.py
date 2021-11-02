@@ -32,6 +32,26 @@ async def homepage(request):
     await request.send_push_promise("/style.css")
     return templates.TemplateResponse("index.html", {"request": request})
 
+async def protocol(request):
+    """
+    Just the word, "h3"
+    """
+    return Response("h3",
+                    headers = { 'Cache-Control': 'no-store',
+                                'Access-Control-Allow-Origin': '*' },
+                    media_type = "text/plain")
+
+async def clear(request):
+    """
+    Empty response body, but clear Alt-Svc
+    """
+    return Response("",
+                    headers = {
+                        'Cache-Control': 'no-store',
+                        'Access-Control-Allow-Origin': '*',
+                        'Alt-Svc': 'clear'
+                    },
+                    media_type = "text/plain")
 
 async def echo(request):
     """
@@ -87,7 +107,10 @@ async def connection_id(request):
     Return tracking data.
     """
     connection_id0 = request.scope["connection_ids"][0].cid.hex()
-    return PlainTextResponse(connection_id0)
+    return Response(connection_id0,
+                    headers = { 'Cache-Control': 'no-store',
+                                'Access-Control-Allow-Origin': '*' },
+                    media_type = "text/plain")
 
 async def ws(websocket):
     """
@@ -139,6 +162,8 @@ async def wt(scope: Scope, receive: Receive, send: Send) -> None:
 starlette = Starlette(
     routes=[
         Route("/", homepage),
+        Route("/protocol", protocol),
+        Route("/clear", clear),
         Route("/{size:int}", padding),
         Route("/connection_id", connection_id),
         Route("/echo", echo, methods=["POST"]),
