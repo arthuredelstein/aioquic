@@ -41,6 +41,15 @@ async def protocol(request):
                                 'Access-Control-Allow-Origin': '*' },
                     media_type = "text/plain")
 
+async def set(request):
+    """
+    Just the word, "h3"
+    """
+    return Response("h3",
+                    headers = { 'Cache-Control': 'no-store',
+                                'Access-Control-Allow-Origin': '*' },
+                    media_type = "text/plain")
+
 async def clear(request):
     """
     Empty response body, but clear Alt-Svc
@@ -162,6 +171,7 @@ async def wt(scope: Scope, receive: Receive, send: Send) -> None:
 starlette = Starlette(
     routes=[
         Route("/", homepage),
+        Route("/set", set),
         Route("/protocol", protocol),
         Route("/clear", clear),
         Route("/{size:int}", padding),
